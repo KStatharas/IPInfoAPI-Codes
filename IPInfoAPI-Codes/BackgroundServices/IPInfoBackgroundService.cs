@@ -11,7 +11,7 @@ namespace IPInfoAPI_Codes.BackgroundServices
     {
         private readonly ILogger<IPInfoBackgroundService> _logger;
         private readonly IServiceProvider _serviceProvider;
-        private readonly int batchSize = 100;
+        private readonly int batchSize = 100; //Automatic-Update job batch
 
         public IPInfoBackgroundService(ILogger<IPInfoBackgroundService> logger, IServiceProvider serviceProvider)
         {
@@ -24,15 +24,18 @@ namespace IPInfoAPI_Codes.BackgroundServices
             _logger.LogInformation("IPInfo API background service has been started.");
             while (!stoppingToken.IsCancellationRequested)
             {
-                //The "await" keyword in the line below is important in order to let the API start running.
-                await Task.Delay(360000);
+                //Automatic-Update job intervals
+                await Task.Delay(3600000);
 
                 await SyncDatabase();
 
             }
         }
 
-
+        /// <summary>
+        /// SyncDatabase is executed automatically in a specific time frequency by the Background Service
+        /// and is used to update IP information stored in the database. 
+        /// </summary>
         private async Task SyncDatabase()
         {
             using (IServiceScope scope = _serviceProvider.CreateScope())
@@ -54,6 +57,10 @@ namespace IPInfoAPI_Codes.BackgroundServices
             }
         }
 
+        /// <summary>
+        /// UpdateCache calls a cache method that checks for potential outdated information in cache and then removes it.
+        /// </summary>
+        /// <param name="changedIps"></param>
         private void UpdateCache(List<IPInfo> changedIps)
         {
             using (IServiceScope cacheScope = _serviceProvider.CreateScope())

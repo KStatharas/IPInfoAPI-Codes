@@ -29,24 +29,25 @@ namespace IPInfoAPI_Codes.Utils
             };
         }
 
-        public static CountryDTO ConvertToDTO (Country country)
+        public static CountryDTO ConvertToDTO(Country country)
         {
-            return new CountryDTO()
-            {
-                Name = country.Name,
-                TwoLetterCode = country.TwoLetterCode,
-                ThreeLetterCode = country.ThreeLetterCode
-            };
+            var result = DTOBuilder.CountryDTOBuilder()
+                                   .SetCountryName(country.Name)
+                                   .SetTwoLetterCode(country.TwoLetterCode)
+                                   .SetThreeLetterCode(country.ThreeLetterCode)
+                                   .Build();
+            return result;
         }
 
-        public static CountryDTO CreateCountryDTO (IPInfo ipInfoItem)
+        public static CountryDTO CreateCountryDTO(IPInfo ipInfoItem)
         {
-            return new CountryDTO()
-            {
-                Name = ipInfoItem.Country_Name,
-                TwoLetterCode = ipInfoItem.TwoLetterCode,
-                ThreeLetterCode = ipInfoItem.ThreeLetterCode
-            };
+            var result = DTOBuilder.CountryDTOBuilder()
+                                   .SetCountryName(ipInfoItem.Country_Name)
+                                   .SetTwoLetterCode(ipInfoItem.TwoLetterCode)
+                                   .SetThreeLetterCode(ipInfoItem.ThreeLetterCode)
+                                   .Build();
+
+            return result;
         }
 
     }

@@ -1,4 +1,5 @@
 ﻿using IPInfoAPI_Codes.DTO;
+using IPInfoAPI_Codes.Repositories;
 using IPInfoAPI_Codes.Services;
 using IPInfoAPI_Codes.Utils;
 using Microsoft.AspNetCore.Mvc;
@@ -8,7 +9,7 @@ namespace IPInfoAPI_Codes.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class IPInfoController : Controller
+    public class IPInfoController : Controller,IIPInfoController
     {
         private readonly IIPInfoService _service;
 

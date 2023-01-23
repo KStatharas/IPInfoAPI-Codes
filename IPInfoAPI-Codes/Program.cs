@@ -27,8 +27,15 @@ namespace IPInfoAPI_Codes
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            
+
+            //LocalServer
+            //builder.Services.AddDbContext<IPInfoAPIDbContext>(options =>
+            //options.UseSqlServer(builder.Configuration.GetConnectionString("IPInfoAPIConnectionString")));
+
+            //Docker
             builder.Services.AddDbContext<IPInfoAPIDbContext>(options =>
-            options.UseSqlServer(builder.Configuration.GetConnectionString("IPInfoAPIConnectionString")));
+            options.UseSqlServer(builder.Configuration.GetConnectionString("DockerConnectionString")));
 
             var app = builder.Build();
 

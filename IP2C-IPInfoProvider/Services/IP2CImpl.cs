@@ -1,22 +1,20 @@
 ﻿using IP2C_IPInfoProvider.Exceptions;
 using IP2C_IPInfoProvider.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace IP2C_IPInfoProvider.Services
 {
+    
     public class IP2CImpl : IIP2C
     {
+        
         public IPInfo getIPCountryDetails(string ip)
         {
             using (WebClient url = new WebClient())
             {
-                //Using WebClient we manage to retrieve IPStack's JSON and pass it to a string
-                string ipInfo = url.DownloadString("http://ip2c.org/?ip="+ip);
+                //Using WebClient we manage to retrieve a string given by IP2C API.
+                string ipInfo = url.DownloadString("http://ip2c.org/?ip=" + ip);
 
                 switch (ipInfo[0])
                 {

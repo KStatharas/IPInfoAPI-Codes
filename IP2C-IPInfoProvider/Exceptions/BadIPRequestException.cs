@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace IP2C_IPInfoProvider.Exceptions
 {
-    internal class BadIPRequestException : Exception
+    public class BadIPRequestException : Exception
     {
         public BadIPRequestException(string ip) : base($"This IP request is invalid: {ip}") {}
     }

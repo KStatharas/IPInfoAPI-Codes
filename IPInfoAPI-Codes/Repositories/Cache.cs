@@ -1,4 +1,5 @@
-﻿using IP2C_IPInfoProvider.Models;
+﻿using Castle.Components.DictionaryAdapter.Xml;
+using IP2C_IPInfoProvider.Models;
 using IPInfoAPI_Codes.DTO;
 using IPInfoAPI_Codes.Models;
 using IPInfoAPI_Codes.Services;
@@ -17,8 +18,10 @@ namespace IPInfoAPI_Codes.Repositories
             _cache = cache;
         }
 
-        
 
+        //GetCountry is one of the methods implemented by the cache.
+        //If the cache has already created an entry that has as a key the IP passed as a parameter in the GetCountry method,
+        //the cache returns the result without accessing the database again.
         public async Task<CountryDTO> GetCountry(string ip)
         {
             string key = $"{ip}";
@@ -33,6 +36,22 @@ namespace IPInfoAPI_Codes.Repositories
 
         }
 
+        //GetIpReport is also cached. The entry's key is the list of strings passed by the user.
+        public async Task<IEnumerable<CountryReportDTO>> GetIpReport(List<String>? twoLetterCodes)
+        {
+            string key = $"report-{twoLetterCodes}";
+
+            return await _cache.GetOrCreate(
+                key,
+                async entry =>
+                {
+                    entry.SetAbsoluteExpiration(TimeSpan.FromMinutes(2));
+                    return await _service.GetIpReport(twoLetterCodes);
+                })!;
+        }
+
+        //If an IP is stored in the cache and its information get changed during
+        //a database update, it will be removed from the cache.
         public void SyncCache(List<IPInfo> changedIps)
         {
             foreach (IPInfo ipItem in changedIps)
@@ -51,9 +70,6 @@ namespace IPInfoAPI_Codes.Repositories
             return await _service.CountStoredIps();
         }
 
-        public async Task<IEnumerable<CountryReportDTO>> GetIpReport(List<String>? twoLetterCodes)
-        {
-           return await _service.GetIpReport(twoLetterCodes);
-        }
+
     }
 }

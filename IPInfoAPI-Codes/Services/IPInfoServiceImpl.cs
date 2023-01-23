@@ -60,6 +60,7 @@ namespace IPInfoAPI_Codes.Services
             return countryOutput;
         }
 
+
         public async Task<List<IPInfo>> UpdateIPInfo(int uCount, int iteratedIps)
         {
             if (iteratedIps < 0 || uCount <= 0) throw new ArgumentException();
@@ -91,13 +92,16 @@ namespace IPInfoAPI_Codes.Services
                         changedIps.Add(updatedIPInfo);
                     }
                 }
-                catch (IPNotFoundException e)
+                //This catch is used in case a no longer available or invalid IP is found in the database.
+                //In that case IP2C-IPInfoProvider service will throw an exception and dbCOntext will remove that IP from the database.
+                catch (Exception e)
                 {
-                    dbContext.Remove(ipItem);
-                    await dbContext.SaveChangesAsync();
+                    if (e is IPNotFoundException || e is BadIPRequestException)
+                    {
+                        dbContext.Remove(ipItem);
+                        await dbContext.SaveChangesAsync();
+                    }
                 }
-
-
             }
             await dbContext.SaveChangesAsync();
 
@@ -117,6 +121,7 @@ namespace IPInfoAPI_Codes.Services
                     return await connection.QueryAsync<CountryReportDTO>(filteredQueryDapper, new { twoLetterCodes });
             }
 
+            //A LINQ implementation:
 
             //var querylinq = (from ips in dbContext.IPAddresses
             //                 join country in dbContext.Countries.Where(x => twoLetterCodes.Contains(x.TwoLetterCode))
