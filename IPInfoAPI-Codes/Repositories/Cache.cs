@@ -36,20 +36,6 @@ namespace IPInfoAPI_Codes.Repositories
 
         }
 
-        //GetIpReport is also cached. The entry's key is the list of strings passed by the user.
-        public async Task<IEnumerable<CountryReportDTO>> GetIpReport(List<String>? twoLetterCodes)
-        {
-            string key = $"report-{twoLetterCodes}";
-
-            return await _cache.GetOrCreate(
-                key,
-                async entry =>
-                {
-                    entry.SetAbsoluteExpiration(TimeSpan.FromMinutes(2));
-                    return await _service.GetIpReport(twoLetterCodes);
-                })!;
-        }
-
         //If an IP is stored in the cache and its information get changed during
         //a database update, it will be removed from the cache.
         public void SyncCache(List<IPInfo> changedIps)
@@ -58,6 +44,11 @@ namespace IPInfoAPI_Codes.Repositories
             {
                 if (_cache.Get(ipItem.IP)!=null) _cache.Remove(ipItem.IP);
             }
+        }
+
+        public async Task<IEnumerable<CountryReportDTO>> GetIpReport(List<String>? twoLetterCodes)
+        {
+            return await _service.GetIpReport(twoLetterCodes);
         }
 
         public Task<List<IPInfo>> UpdateIPInfo(int uCount, int iteration)
